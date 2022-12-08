@@ -48,7 +48,7 @@ spec:
   selector:
     app: grafana
   type: LoadBalancer
-  #ports:
-   # - port: 3000
-    #  targetPort: 3000
-     # nodePort: 30004
+  ports:
+    - port: 3000
+      targetPort: 3000
+    
