@@ -70,10 +70,9 @@ spec:
   - name: grafana
     port: 3000
     protocol: TCP
-    targetPort: grafana-http
+    targetPort: 3000
   selector:
     app: grafana
-  sessionAffinity: None
   type: LoadBalancer
 ---
 apiVersion: v1
@@ -85,7 +84,7 @@ spec:
   - name: grafana-image-renderer
     port: 8081
     protocol: TCP
-    targetPort: http
+    targetPort: 8081
   selector:
     app: grafana-image-renderer
   sessionAffinity: None
