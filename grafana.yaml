@@ -28,7 +28,7 @@ spec:
         image: grafana/grafana:latest
         envFrom:
         - configMapRef:
-          name: grafana-image-renderer
+            name: grafana-image-renderer
       - name: grafana-image-renderer
         image: grafana/grafana-image-renderer:latest
         env:
