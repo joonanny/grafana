@@ -27,7 +27,7 @@ spec:
         image: grafana/grafana:latest
         envFrom:
         - configMapRef:
-          name: grafana-image-renderer
+            name: grafana-image-renderer
         #이하 설정 pvc grafana server config 등 생략 ...
 ---
 apiVersion: apps/v1
