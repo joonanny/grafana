@@ -1,11 +1,10 @@
 ---
 apiVersion: v1
 data:
-  GF_RENDERING_CALLBACK_URL: http://localhost:3000/
-  GF_RENDERING_SERVER_URL: http://localhost:8081/render
+  GF_RENDERING_CALLBACK_URL: http://grafana-service.grafana.svc:3000/
+  GF_RENDERING_SERVER_URL: http://grafana-image-renderer.grafana.svc:8081/render
 kind: ConfigMap
 metadata:
-  creationTimestamp: null
   name: grafana-image-renderer
 ---
 apiVersion: apps/v1
@@ -28,27 +27,66 @@ spec:
         image: grafana/grafana:latest
         envFrom:
         - configMapRef:
-            name: grafana-image-renderer
-      - name: grafana-image-renderer
-        image: grafana/grafana-image-renderer:latest
+          name: grafana-image-renderer
+        #이하 설정 pvc grafana server config 등 생략 ...
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: grafana-image-renderer
+  name: grafana-image-renderer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana-image-renderer
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: grafana-image-renderer
+    spec:
+      containers:
+      - image: grafana/grafana-image-renderer
+        name: grafana-image-renderer
         env:
         - name: IGNORE_HTTPS_ERRORS
           value: "true"
-          
+        resources: {}
+        ports:
+        - containerPort: 8081
+          name: http
+          protocol: TCP
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: grafana
-  namespace: monitoring
-  annotations:
-      prometheus.io/scrape: 'true'
-      prometheus.io/port:   '3000'
+  name: grafana-service
 spec:
+  ports:
+  - name: grafana
+    port: 3000
+    protocol: TCP
+    targetPort: grafana-http
   selector:
     app: grafana
+  sessionAffinity: None
   type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-image-renderer
+spec:
   ports:
-    - port: 3000
-      targetPort: 3000
-    
+  - name: grafana-image-renderer
+    port: 8081
+    protocol: TCP
+    targetPort: http
+  selector:
+    app: grafana-image-renderer
+  sessionAffinity: None
+  type: ClusterIP
