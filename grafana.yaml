@@ -29,7 +29,6 @@ spec:
         envFrom:
         - configMapRef:
           name: grafana-image-renderer
-        #이하 설정 생략 ...
       - name: grafana-image-renderer
         image: grafana/grafana-image-renderer:latest
         env:
